@@ -1,0 +1,45 @@
+#cloud-config
+users:
+  - name: ubuntu
+    gecos: Ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    shell: /bin/bash
+    lock_passwd: false
+    ssh_import_id: [gh:seyukun]
+apt:
+  primary:
+    - arches: [default]
+      uri: http://ftp.udx.icscoe.jp/Linux/ubuntu
+  security:
+    - arches: [default]
+      uri: http://ftp.udx.icscoe.jp/Linux/ubuntu
+package_update: true
+package_upgrade: true
+packages:
+  - vim
+  - nano
+  - curl
+  - wget
+  - tmux
+  - jq
+  - fish
+  - ca-certificates
+  - gnupg
+  - lsb-release
+  - software-properties-common
+  - build-essential
+  - pkg-config
+  - net-tools
+  - dnsutils
+  - iproute2
+  - traceroute
+  - ssh
+  - git
+  - make
+locale: en_US.UTF-8
+timezone: Asia/Tokyo
+ssh_pwauth: no
+resize_rootfs: true
+growpart:
+  mode: auto
