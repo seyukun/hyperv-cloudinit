@@ -1,31 +1,40 @@
 #!/bin/bash
 
-pwsh.exe -Command '
-$VM = Read-Host -Prompt "VM NAME"
+read -rp "VM NAME: " VM
+PipeName="${VM//[^A-Za-z0-9._-]/_}"
 
-sudo pwsh.exe -Command "
-    Set-VMComPort -VMName `"$VM`" -Number 1 `"\\.\pipe\$VM`" | Out-Null
-    Start-VM `"$VM`" | Out-Null
+pwsh.exe -Command "
+Start-Process -FilePath sudo -ArgumentList @(\"pwsh.exe\", \"-Command\", @\"
+Set-VMComPort -VMName '$VM' -Number 1 -Path '\\\\.\\pipe\\$PipeName'
+Start-VM '$VM'
+\"@) -Wait
 "
 
-$pipe = New-Object System.IO.Pipes.NamedPipeClientStream(".", "$VM", [System.IO.Pipes.PipeDirection]::In)
-$pipe.Connect()
+pwsh.exe -Command '
+$pipe = [System.IO.Pipes.NamedPipeClientStream]::new(".", "'$PipeName'", [System.IO.Pipes.PipeDirection]::In)
 
-$sr = New-Object System.IO.StreamReader($pipe)
+while ($true) {
+    try {
+        $pipe.Connect(1000)
+        break
+    }
+    catch {
+        Start-Sleep -Milliseconds 200
+    }
+}
+
+$sr = [System.IO.StreamReader]::new($pipe)
+
+while ($sr.Peek() -eq -1) {
+    Start-Sleep -Milliseconds 100
+}
 
 while ($true) {
     $n = $sr.Peek()
     if ($n -ge 0) {
-        $ch = [char]$sr.Read()
-        if ($ch -ne "`r") {
-            [Console]::Write($ch)
-        }
-    }
-    else {
-        Start-Sleep -Milliseconds 100
-    }
-    if ($sr.EndOfStream) {
-        break
+        [Console]::Write([char]$sr.Read())
+    } else {
+        Start-Sleep -Milliseconds 50
     }
 }
 '
