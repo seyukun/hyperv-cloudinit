@@ -37,6 +37,8 @@ packages:
   - ssh
   - git
   - make
+  - linux-cloud-tools-common
+  - linux-cloud-tools-generic
 locale: en_US.UTF-8
 timezone: Asia/Tokyo
 ssh_pwauth: no

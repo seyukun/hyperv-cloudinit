@@ -7,6 +7,7 @@ pwsh.exe -Command "
 Start-Process -FilePath sudo -ArgumentList @(\"pwsh.exe\", \"-Command\", @\"
 Set-VMComPort -VMName '$VM' -Number 1 -Path '\\\\.\\pipe\\$PipeName'
 Start-VM '$VM'
+# convey.exe \\\\.\\pipe\\$PipeName
 \"@) -Wait
 "
 
