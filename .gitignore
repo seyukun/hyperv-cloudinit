@@ -1,5 +1,5 @@
-/*.vhdx
-/*.vhd
-/*.qcow2
-/*.img
-/*.iso
+*.vhdx
+*.vhd
+*.qcow2
+*.img
+*.iso
